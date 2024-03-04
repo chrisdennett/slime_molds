@@ -12,14 +12,15 @@ class Mold {
     this.heading = random(360);
     this.vx = cos(this.heading);
     this.vy = sin(this.heading);
+
     this.rotAngle = 45;
+    this.sensorAngle = 45;
+    this.sensorDist = 10;
 
     // Sensor variables
     this.rSensorPos = createVector(0, 0);
     this.lSensorPos = createVector(0, 0);
     this.fSensorPos = createVector(0, 0);
-    this.sensorAngle = 45;
-    this.sensorDist = 15;
   }
 
   update() {
@@ -30,10 +31,29 @@ class Mold {
     this.x = (this.x + this.vx + width) % width;
     this.y = (this.y + this.vy + height) % height;
 
-    if (this.x > width / 2) {
-      this.rotAngle = 10;
-    } else {
+    // bottom right
+    if (this.x > width / 2 && this.y > height / 2) {
       this.rotAngle = 45;
+      this.sensorAngle = 5;
+      this.sensorDist = 200;
+    }
+    // top left
+    else if (this.x < width / 2 && this.y < height / 2) {
+      this.rotAngle = 10;
+      this.sensorAngle = 45;
+      this.sensorDist = 2;
+    }
+    // top right
+    else if (this.x > width / 2 && this.y < height / 2) {
+      this.rotAngle = 45;
+      this.sensorAngle = 45;
+      this.sensorDist = 10;
+    }
+    // bottom left
+    else {
+      this.rotAngle = 45;
+      this.sensorAngle = 45;
+      this.sensorDist = 10;
     }
 
     // Get 3 sensor positions based on current position and heading
@@ -43,19 +63,13 @@ class Mold {
 
     // Get indices of the 3 sensor positions and get the color values from those indices
     let index, l, r, f;
-    index =
-      4 * (d * floor(this.rSensorPos.y)) * (d * width) +
-      4 * (d * floor(this.rSensorPos.x));
+    index = 4 * floor(this.rSensorPos.y) * width + 4 * floor(this.rSensorPos.x);
     r = pixels[index];
 
-    index =
-      4 * (d * floor(this.lSensorPos.y)) * (d * width) +
-      4 * (d * floor(this.lSensorPos.x));
+    index = 4 * floor(this.lSensorPos.y) * width + 4 * floor(this.lSensorPos.x);
     l = pixels[index];
 
-    index =
-      4 * (d * floor(this.fSensorPos.y)) * (d * width) +
-      4 * (d * floor(this.fSensorPos.x));
+    index = 4 * floor(this.fSensorPos.y) * width + 4 * floor(this.fSensorPos.x);
     f = pixels[index];
 
     // Compare values of f, l, and r to determine movement
